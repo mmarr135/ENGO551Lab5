@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>My Webpage!</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.js"></script>
+<style>
+h1, p {
+  text-align:center;
+}
+body {
+  background-color: lightblue;
+}
+
+#map {
+  height: 400px;
+  width: 600px;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+</style>
+
+<script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.2.1/mapbox-gl-draw.js"></script>
+<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.2.1/mapbox-gl-draw.css" type="text/css">
+
+</head>
+
+<body>
+  <h1> Map of Calgary </h1>
+  <p> Please draw a polyline using the draw tools. If you wish to display a simplified polyline, press the simplify button. </p>
+  <input type="button" value="Simplify" onclick="simplify();" />
+  <input type="button" value="Clear" onClick="document.location.reload(true)">
+
+<div id="map"></div>
+
+
+<script>
+mapboxgl.accessToken = 'pk.eyJ1IjoibW1hcnIiLCJhIjoiY2tsaDljcm1oMjI0eDJ3bzMwY2xpeW9tbiJ9.f-kfWu0AkUBK6aU396cUTQ';
+
+var map = new mapboxgl.Map({
+  container: 'map',
+  style: 'mapbox://styles/mapbox/streets-v11',
+  center: [-114.05, 51.04],
+  zoom: 8
+});
+
+    var draw = new MapboxDraw({
+        userProperties: true,
+        displayControlsDefault: false,
+        controls: {
+            line_string: true,
+            trash: true
+        }
+    });
+
+    map.on('load', function () {
+
+    map.addControl(draw);
+
+});
+
+    function simplify(e) {
+        var data = draw.getAll();
+        if(data.features.length > 0)  {
+          var options = {tolerance: 0.01, highQuality: false};
+          var simplified = turf.simplify(data.features[0], options);
+          draw.add(simplified);
+    }
+  }
+
+
+</script>
+
+</body>
+</html>
